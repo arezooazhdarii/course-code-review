@@ -12,6 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentRegister {
+    //camel case - studentNumber
+    //using basic validation for example @NotBlank(message = "Student number is required") and checking size for number
+    // check custom paaword
     private String studentnumber;
     private String lastname;
     private String firstname;

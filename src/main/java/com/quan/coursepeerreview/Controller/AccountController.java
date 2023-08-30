@@ -24,44 +24,64 @@ import com.quan.coursepeerreview.Repository.AccountRepos;
 import com.quan.coursepeerreview.Service.AccountService;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/v1/account")
 public class AccountController {
-    @Autowired
-    AccountService accountService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Account>> getAllAccounts() {
-        return new ResponseEntity<List<Account>>(accountService.getAccounts(), HttpStatus.OK);
+    private final AccountService accountService;
+
+    /**
+     * using constructor dependency injection
+     * Compile-Time Safety :because avoid of nullPointerException, if dependency isn't available spring boot raise error at application startup
+     * Testability: good practice, we can easily provide a mock
+     */
+    @Autowired
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
     }
 
-    @GetMapping("/role/{role}")
+    // remove "all" because better RESTful API design principles
+    @GetMapping()
+    public ResponseEntity<List<Account>> getAllAccounts() {
+        return new ResponseEntity<>(accountService.getAccounts(), HttpStatus.OK);
+    }
+
+
+    // 1 - remove "role" because better RESTful API design principles
+    // 2 - i prefer use string in pathVariable because in this case spring try convert string value in url to enum value
+    //if string doesn't match might run into runtime exception
+    @GetMapping("/{role}")
     public ResponseEntity<List<Account>> getAccountsByRole(@PathVariable Role role) {
         return new ResponseEntity<>(accountService.getAccountsByRole(role), HttpStatus.OK);
     }
 
-    @GetMapping("/id/{id}")
+
+    // remove "id" because better RESTful API design principles
+    @GetMapping("/{id}")
     public ResponseEntity<Account> getAccount(@PathVariable Long id) {
-        return new ResponseEntity<Account>(accountService.getAccount(id), HttpStatus.OK);
+        return new ResponseEntity<>(accountService.getAccount(id), HttpStatus.OK);
     }
-    @PostMapping("/register")
-    public ResponseEntity<HttpStatus> Register(@RequestBody StudentRegister studentRegister) {
+
+    // 1 - first word of method is capitalized we use CamelCase for define method and name of method isn't clear
+    // 2- validation for StudentRegister(DTO)
+    @PostMapping("/register-student")
+    public ResponseEntity<HttpStatus> registerStudent(@RequestBody StudentRegister studentRegister) {
         accountService.saveAccount(studentRegister);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/teacherRegister")
-    public ResponseEntity<HttpStatus> registerStudent(@RequestBody TeacherRegister teacherRegister) {
+    @PostMapping("/register-teacher")
+    public ResponseEntity<HttpStatus> registerTeacher(@RequestBody TeacherRegister teacherRegister) {
         accountService.saveTeacher(teacherRegister);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    @PutMapping("/changepassword")
-    public ResponseEntity<Account> ChangePassword(@RequestBody ChangePassword changePassword) {
-        return new ResponseEntity<Account>(accountService.updateAccount( changePassword), HttpStatus.OK);
+    @PutMapping("/change-password")
+    public ResponseEntity<Account> changePassword(@RequestBody ChangePassword changePassword) {
+        return new ResponseEntity<>(accountService.updateAccount( changePassword), HttpStatus.OK);
     }
 
-    @DeleteMapping("/id/{id}")
-    public ResponseEntity<HttpStatus> DeleteAccount(@PathVariable Long id) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<HttpStatus> deleteAccount(@PathVariable Long id) {
         accountService.deleteAccount(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } 
+    }
 }
