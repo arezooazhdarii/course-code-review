@@ -3,8 +3,9 @@
  */
 
 plugins {
-    `java-library`
+    application
     `maven-publish`
+    id("io.freefair.lombok") version "8.3"
 }
 
 repositories {
@@ -23,22 +24,25 @@ repositories {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-starter-data-jpa:3.0.0")
-    api("org.springframework.boot:spring-boot-starter-security:3.0.0")
-    api("org.springframework.boot:spring-boot-starter-validation:3.0.0")
-    api("org.springframework.boot:spring-boot-starter-web:3.0.0")
-    api("org.projectlombok:lombok:1.18.24")
-    api("com.auth0:java-jwt:4.0.0")
-    runtimeOnly("org.springframework.boot:spring-boot-devtools:3.0.0")
-    runtimeOnly("org.postgresql:postgresql:42.5.1")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:3.0.0")
-    testImplementation("org.springframework.security:spring-security-test:6.0.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.3")
+    implementation("org.springframework.boot:spring-boot-starter-security:3.1.3")
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.1.3")
+    implementation("org.springframework.boot:spring-boot-starter-web:3.1.3")
+    implementation("org.projectlombok:lombok:1.18.28")
+    implementation("com.auth0:java-jwt:4.4.0")
+    runtimeOnly("org.springframework.boot:spring-boot-devtools:3.1.3")
+    runtimeOnly("org.postgresql:postgresql:42.6.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.3")
+    testImplementation("org.springframework.security:spring-security-test:6.1.3")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+
 }
 
 group = "com.quan"
 version = "0.0.1-SNAPSHOT"
 description = "course-peer-review"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {
     publications.create<MavenPublication>("maven") {
@@ -52,4 +56,12 @@ tasks.withType<JavaCompile>() {
 
 tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
+}
+
+java.toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

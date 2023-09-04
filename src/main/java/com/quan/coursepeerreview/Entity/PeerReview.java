@@ -69,7 +69,7 @@ public class PeerReview {
     public double countGrade() {
         double grad = 0;
         if(this.questions.size() > 0) {
-            grad = this.questions.stream().map(que -> que.getGrade()).mapToDouble(gra -> Double.valueOf(gra)).reduce(0, (a, b) -> a + b);
+            grad = this.questions.stream().map(Question::getGrade).mapToDouble(Double::valueOf).reduce(0, Double::sum);
         } else {
             grad = 0;
         }
